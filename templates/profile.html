@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+{% block title %}Profile — Spendly{% endblock %}
+
+{% block head %}
+<style>
+  /* ── Layout ──────────────────────────────────────────── */
+  .profile-page {
+    min-height: calc(100vh - 60px - 80px);
+    background: var(--paper);
+  }
+
+  .profile-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  /* ── Hero / User Info ────────────────────────────────── */
+  .profile-hero {
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .profile-hero-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  .avatar {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--paper-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
+  }
+
+  .user-details h1 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--ink);
+    margin: 0 0 0.25rem;
+  }
+
+  .user-details .user-email {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    margin: 0 0 0.2rem;
+  }
+
+  .user-details .user-since {
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  /* ── Stats Grid ──────────────────────────────────────── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem 1.75rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    margin: 0 0 0.5rem;
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .stat-value.accent { color: var(--accent); }
+
+  /* ── Lower two-column layout ─────────────────────────── */
+  .profile-lower {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* ── Shared card ─────────────────────────────────────── */
+  .section-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .section-card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .section-card-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* ── Transaction table ───────────────────────────────── */
+  .tx-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .tx-table th {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--paper);
+  }
+
+  .tx-table th.right,
+  .tx-table td.right { text-align: right; }
+
+  .tx-table td {
+    padding: 0.85rem 1.5rem;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .tx-table tr:last-child td { border-bottom: none; }
+
+  .tx-table .tx-desc { color: var(--ink); font-weight: 500; }
+  .tx-table .tx-date { color: var(--ink-muted); font-size: 0.85rem; }
+  .tx-table .tx-amount { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ── Category badges ─────────────────────────────────── */
+  .badge {
+    display: inline-block;
+    padding: 0.2em 0.65em;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-food          { background: var(--accent-light);   color: var(--accent); }
+  .badge-travel        { background: var(--accent-2-light); color: var(--accent-2); }
+  .badge-bills         { background: var(--paper-warm);     color: var(--ink-soft); border: 1px solid var(--border); }
+  .badge-entertainment { background: var(--border-soft);    color: var(--ink-soft); }
+  .badge-health        { background: var(--danger-light);   color: var(--danger); }
+  .badge-other         { background: var(--paper);          color: var(--ink-faint); border: 1px solid var(--border); }
+
+  /* ── Category breakdown ──────────────────────────────── */
+  .categories-body { padding: 1.25rem 1.5rem; }
+
+  .category-row {
+    display: grid;
+    grid-template-columns: 7rem 1fr 4.5rem;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .category-row:last-child { margin-bottom: 0; }
+
+  .cat-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .progress-track {
+    height: 8px;
+    background: var(--border-soft);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    border-radius: 99px;
+    width: var(--bar-pct);
+  }
+
+  .bar-food          { background: var(--accent); }
+  .bar-bills         { background: var(--ink-muted); }
+  .bar-travel        { background: var(--accent-2); }
+  .bar-entertainment { background: var(--ink-faint); }
+  .bar-health        { background: var(--danger); }
+  .bar-other         { background: var(--border); }
+
+  .cat-amount {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Responsive ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .profile-lower {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-hero-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .tx-table th:first-child,
+    .tx-table td:first-child {
+      display: none;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+
+  <!-- ── User Info ──────────────────────────────────────── -->
+  <div class="profile-hero">
+    <div class="profile-hero-inner">
+      <div class="avatar">{{ user.initials }}</div>
+      <div class="user-details">
+        <h1>{{ user.name }}</h1>
+        <p class="user-email">{{ user.email }}</p>
+        <p class="user-since">Member since {{ user.member_since }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-inner">
+
+    <!-- ── Summary Stats ──────────────────────────────────── -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Total Spent</p>
+        <p class="stat-value accent">{{ stats.total_spent }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Transactions</p>
+        <p class="stat-value">{{ stats.transaction_count }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Top Category</p>
+        <p class="stat-value">{{ stats.top_category }}</p>
+      </div>
+    </div>
+
+    <!-- ── Lower: transactions + breakdown ──────────────── -->
+    <div class="profile-lower">
+
+      <!-- Transaction History -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h2>Recent Transactions</h2>
+        </div>
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th class="right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in transactions %}
+            <tr>
+              <td class="tx-date">{{ t.date }}</td>
+              <td class="tx-desc">{{ t.description }}</td>
+              <td><span class="badge badge-{{ t.category | lower }}">{{ t.category }}</span></td>
+              <td class="tx-amount right">{{ t.amount }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Category Breakdown -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h2>By Category</h2>
+        </div>
+        <div class="categories-body">
+          {% for cat in categories %}
+          <div class="category-row">
+            <span class="cat-name">{{ cat.name }}</span>
+            <div class="progress-track">
+              <div class="progress-bar bar-{{ cat.name | lower }}" style="--bar-pct: {{ cat.pct }}%"></div>
+            </div>
+            <span class="cat-amount">{{ cat.amount }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div><!-- /.profile-lower -->
+  </div><!-- /.profile-inner -->
+</div><!-- /.profile-page -->
+{% endblock %}
