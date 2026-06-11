@@ -300,6 +300,22 @@ a { color: inherit; text-decoration: none; }
     color: var(--ink);
 }
 
+.btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.9rem;
+    background: var(--accent);
+    color: var(--paper-card);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.15s;
+}
+
+.btn-primary-sm:hover { opacity: 0.85; }
+
 /* ------------------------------------------------------------------ */
 /* Features section                                                    */
 /* ------------------------------------------------------------------ */
@@ -481,6 +497,24 @@ a { color: inherit; text-decoration: none; }
 }
 
 .auth-switch a:hover { text-decoration: underline; }
+
+.input-prefix-wrapper {
+    position: relative;
+}
+
+.input-prefix-wrapper .prefix {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-muted);
+    pointer-events: none;
+    font-size: 0.95rem;
+}
+
+.input-prefix-wrapper .form-input {
+    padding-left: 1.75rem;
+}
 
 /* ------------------------------------------------------------------ */
 /* Footer                                                              */
