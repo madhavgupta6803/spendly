@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 
 from database.db import get_db, init_db, seed_db
+from database.queries import get_user_by_id, get_summary_stats, get_recent_transactions, get_category_breakdown
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -114,35 +115,32 @@ def profile():
     if not session.get("user_id"):
         return redirect(url_for("login"))
 
-    name = session["user_name"]
-    initials = "".join(w[0] for w in name.split()[:2]).upper()
+    user_data = get_user_by_id(session["user_id"])
+    if not user_data:
+        session.clear()
+        return redirect(url_for("login"))
 
+    name = user_data["name"]
+    initials = "".join(w[0] for w in name.split()[:2]).upper()
     user = {
         "name": name,
         "initials": initials,
-        "email": "demo@spendly.com",
-        "member_since": "January 2024",
+        "email": user_data["email"],
+        "member_since": user_data["member_since"],
     }
-    stats = {
-        "total_spent": "₹24,850",
-        "transaction_count": 12,
-        "top_category": "Food",
-    }
-    transactions = [
-        {"date": "31 May 2025", "description": "Dinner at Hakkasan",   "category": "Food",          "amount": "₹2,400"},
-        {"date": "29 May 2025", "description": "Metro monthly pass",    "category": "Travel",        "amount": "₹1,200"},
-        {"date": "27 May 2025", "description": "Electricity bill",      "category": "Bills",         "amount": "₹3,150"},
-        {"date": "25 May 2025", "description": "Movie night",           "category": "Entertainment", "amount": "₹800"},
-        {"date": "22 May 2025", "description": "Pharmacy",              "category": "Health",        "amount": "₹650"},
-    ]
-    categories = [
-        {"name": "Food",          "amount": "₹8,200", "pct": 33},
-        {"name": "Bills",         "amount": "₹6,500", "pct": 26},
-        {"name": "Travel",        "amount": "₹4,800", "pct": 19},
-        {"name": "Entertainment", "amount": "₹2,950", "pct": 12},
-        {"name": "Health",        "amount": "₹1,400", "pct": 6},
-        {"name": "Other",         "amount": "₹1,000", "pct": 4},
-    ]
+
+    # ── STATS SECTION (Subagent 2) ──────────────────────────────
+    stats = get_summary_stats(session["user_id"])
+    # ── END STATS SECTION ────────────────────────────────────────
+
+    # ── TRANSACTIONS SECTION (Subagent 1) ───────────────────────
+    transactions = get_recent_transactions(session["user_id"])
+    # ── END TRANSACTIONS SECTION ─────────────────────────────────
+
+    # ── CATEGORIES SECTION (Subagent 3) ─────────────────────────
+    categories = get_category_breakdown(session["user_id"])
+    # ── END CATEGORIES SECTION ───────────────────────────────────
+
     return render_template("profile.html", user=user, stats=stats,
                            transactions=transactions, categories=categories)
 
