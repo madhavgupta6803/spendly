@@ -230,6 +230,76 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* ── Filter bar ─────────────────────────────────────── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .filter-presets {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.4em 1em;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    background: var(--paper);
+    border: 1px solid var(--border);
+    text-decoration: none;
+  }
+
+  .filter-btn:hover { color: var(--ink); background: var(--paper-warm); }
+
+  .filter-btn.active {
+    background: var(--accent);
+    color: var(--paper-card);
+    border-color: var(--accent);
+  }
+
+  .filter-custom { display: flex; align-items: center; gap: 0.5rem; }
+
+  .filter-custom input[type="date"] {
+    padding: 0.35em 0.65em;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+  }
+
+  .filter-custom button {
+    padding: 0.35em 0.9em;
+    border-radius: var(--radius-sm);
+    background: var(--ink);
+    color: var(--paper-card);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+  }
+
+  .filter-separator { font-size: 0.85rem; color: var(--ink-muted); }
+
+  .period-label {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    margin: 0 0 1.25rem;
+  }
+
   /* ── Responsive ──────────────────────────────────────── */
   @media (max-width: 768px) {
     .profile-lower {
@@ -272,6 +342,27 @@
   </div>
 
   <div class="profile-inner">
+
+    <!-- ── Filter Bar ────────────────────────────────────── -->
+    <div class="filter-bar">
+      <div class="filter-presets">
+        <a href="{{ url_for('profile') }}?period=this_month"
+           class="filter-btn{% if active_period == 'this_month' %} active{% endif %}">This Month</a>
+        <a href="{{ url_for('profile') }}?period=last_3_months"
+           class="filter-btn{% if active_period == 'last_3_months' %} active{% endif %}">Last 3 Months</a>
+        <a href="{{ url_for('profile') }}?period=this_year"
+           class="filter-btn{% if active_period == 'this_year' %} active{% endif %}">This Year</a>
+        <a href="{{ url_for('profile') }}?period=all"
+           class="filter-btn{% if active_period == 'all' %} active{% endif %}">All Time</a>
+      </div>
+      <form class="filter-custom" method="get" action="{{ url_for('profile') }}">
+        <input type="date" name="from" value="{{ date_from or '' }}">
+        <span class="filter-separator">to</span>
+        <input type="date" name="to" value="{{ date_to or '' }}">
+        <button type="submit">Apply</button>
+      </form>
+    </div>
+    <p class="period-label">Showing: <strong>{{ period_label }}</strong></p>
 
     <!-- ── Summary Stats ──────────────────────────────────── -->
     <div class="stats-grid">

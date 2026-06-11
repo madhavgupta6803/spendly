@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from flask import Flask, render_template, request, redirect, url_for, session
 
 from database.db import get_db, init_db, seed_db
@@ -129,20 +131,61 @@ def profile():
         "member_since": user_data["member_since"],
     }
 
-    # ── STATS SECTION (Subagent 2) ──────────────────────────────
-    stats = get_summary_stats(session["user_id"])
-    # ── END STATS SECTION ────────────────────────────────────────
+    # ── Date filter ──────────────────────────────────────────────
+    today = date.today()
+    date_from_raw = request.args.get("from", "").strip()
+    date_to_raw   = request.args.get("to", "").strip()
+    period        = request.args.get("period", "all")
 
-    # ── TRANSACTIONS SECTION (Subagent 1) ───────────────────────
-    transactions = get_recent_transactions(session["user_id"])
-    # ── END TRANSACTIONS SECTION ─────────────────────────────────
+    date_from = date_to = None
+    active_period = "all"
+    period_label = "All time"
 
-    # ── CATEGORIES SECTION (Subagent 3) ─────────────────────────
-    categories = get_category_breakdown(session["user_id"])
-    # ── END CATEGORIES SECTION ───────────────────────────────────
+    if date_from_raw and date_to_raw:
+        try:
+            d_from = date.fromisoformat(date_from_raw)
+            d_to   = date.fromisoformat(date_to_raw)
+            if d_from > d_to:
+                d_from, d_to = d_to, d_from
+            date_from, date_to = d_from.isoformat(), d_to.isoformat()
+            active_period = "custom"
+            period_label = (
+                f"{d_from.strftime('%-d %b %Y')} – {d_to.strftime('%-d %b %Y')}"
+            )
+        except ValueError:
+            pass
+    elif period == "this_month":
+        date_from = today.replace(day=1).isoformat()
+        date_to   = today.isoformat()
+        active_period = "this_month"
+        period_label  = today.strftime("%B %Y")
+    elif period == "last_3_months":
+        date_from = (today - timedelta(days=90)).isoformat()
+        date_to   = today.isoformat()
+        active_period = "last_3_months"
+        period_label  = "Last 3 months"
+    elif period == "this_year":
+        date_from = today.replace(month=1, day=1).isoformat()
+        date_to   = today.isoformat()
+        active_period = "this_year"
+        period_label  = str(today.year)
+    # ── END Date filter ──────────────────────────────────────────
 
-    return render_template("profile.html", user=user, stats=stats,
-                           transactions=transactions, categories=categories)
+    stats        = get_summary_stats(session["user_id"], date_from, date_to)
+    transactions = get_recent_transactions(session["user_id"], date_from=date_from, date_to=date_to)
+    categories   = get_category_breakdown(session["user_id"], date_from, date_to)
+
+    return render_template(
+        "profile.html",
+        user=user,
+        stats=stats,
+        transactions=transactions,
+        categories=categories,
+        active_period=active_period,
+        date_from=date_from,
+        date_to=date_to,
+        period_label=period_label,
+    )
 
 
 @app.route("/expenses/add")
