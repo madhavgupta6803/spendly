@@ -172,12 +172,14 @@
     white-space: nowrap;
   }
 
-  .badge-food          { background: var(--accent-light);   color: var(--accent); }
-  .badge-travel        { background: var(--accent-2-light); color: var(--accent-2); }
-  .badge-bills         { background: var(--paper-warm);     color: var(--ink-soft); border: 1px solid var(--border); }
-  .badge-entertainment { background: var(--border-soft);    color: var(--ink-soft); }
-  .badge-health        { background: var(--danger-light);   color: var(--danger); }
-  .badge-other         { background: var(--paper);          color: var(--ink-faint); border: 1px solid var(--border); }
+  .badge-food          { background: var(--accent-light);          color: var(--accent); }
+  .badge-travel        { background: var(--accent-2-light);        color: var(--accent-2); }
+  .badge-bills         { background: var(--paper-warm);            color: var(--ink-soft); border: 1px solid var(--border); }
+  .badge-entertainment { background: var(--border-soft);           color: var(--ink-soft); }
+  .badge-health        { background: var(--danger-light);          color: var(--danger); }
+  .badge-other         { background: var(--paper);                 color: var(--ink-faint); border: 1px solid var(--border); }
+  .badge-shopping      { background: var(--color-shopping-light);  color: var(--color-shopping); }
+  .badge-transport     { background: var(--color-transport-light); color: var(--color-transport); }
 
   /* ── Category breakdown ──────────────────────────────── */
   .categories-body { padding: 1.25rem 1.5rem; }
@@ -217,6 +219,8 @@
   .bar-entertainment { background: var(--ink-faint); }
   .bar-health        { background: var(--danger); }
   .bar-other         { background: var(--border); }
+  .bar-shopping      { background: var(--color-shopping); }
+  .bar-transport     { background: var(--color-transport); }
 
   .cat-amount {
     font-size: 0.82rem;
@@ -323,7 +327,7 @@
         <div class="categories-body">
           {% for cat in categories %}
           <div class="category-row">
-            <span class="cat-name">{{ cat.name }}</span>
+            <span class="badge badge-{{ cat.name | lower }}">{{ cat.name }}</span>
             <div class="progress-track">
               <div class="progress-bar bar-{{ cat.name | lower }}" style="--bar-pct: {{ cat.pct }}%"></div>
             </div>
