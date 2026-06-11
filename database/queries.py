@@ -21,8 +21,22 @@ def get_summary_stats(user_id):
 
 
 def get_recent_transactions(user_id, limit=10):
-    # Implemented by Subagent 1
-    pass
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT date, description, category, amount FROM expenses "
+        "WHERE user_id = ? ORDER BY date DESC LIMIT ?",
+        (user_id, limit)
+    ).fetchall()
+    conn.close()
+    return [
+        {
+            "date": datetime.strptime(r["date"], "%Y-%m-%d").strftime("%-d %b %Y"),
+            "description": r["description"] or "",
+            "category": r["category"],
+            "amount": f"₹{r['amount']:,.0f}",
+        }
+        for r in rows
+    ]
 
 
 def get_category_breakdown(user_id):
