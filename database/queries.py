@@ -26,5 +26,24 @@ def get_recent_transactions(user_id, limit=10):
 
 
 def get_category_breakdown(user_id):
-    # Implemented by Subagent 3
-    pass
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT category, SUM(amount) as total FROM expenses "
+        "WHERE user_id = ? GROUP BY category ORDER BY total DESC",
+        (user_id,)
+    ).fetchall()
+    conn.close()
+    if not rows:
+        return []
+    grand = sum(r["total"] for r in rows)
+    result = [
+        {"name": r["category"], "_amount": r["total"], "pct": round(r["total"] / grand * 100)}
+        for r in rows
+    ]
+    # Largest category absorbs rounding remainder so pct values sum to exactly 100
+    diff = 100 - sum(item["pct"] for item in result)
+    result[0]["pct"] += diff
+    for item in result:
+        item["amount"] = f"₹{item['_amount']:,.0f}"
+        del item["_amount"]
+    return result
