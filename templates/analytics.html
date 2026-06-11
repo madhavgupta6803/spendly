@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Analytics — Spendly{% endblock %}
+
+{% block head %}
+<style>
+  .analytics-page {
+    min-height: calc(100vh - 60px - 100px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .coming-soon-badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+
+  .analytics-icon {
+    width: 96px;
+    height: 96px;
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 2.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  }
+
+  .analytics-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .analytics-subtitle {
+    font-size: 1rem;
+    color: var(--ink-muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin: 0 auto 3rem;
+  }
+
+  .preview-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto 3rem;
+  }
+
+  .preview-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem 1.25rem;
+    text-align: left;
+  }
+
+  .preview-card-icon {
+    font-size: 1.25rem;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .preview-card-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .preview-card-body {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  .analytics-back {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.65rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .analytics-back:hover { background: var(--accent); }
+
+  @media (max-width: 640px) {
+    .preview-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-page">
+
+  <span class="coming-soon-badge">Coming Soon</span>
+
+  <div class="analytics-icon">◎</div>
+
+  <h1 class="analytics-title">Analytics</h1>
+  <p class="analytics-subtitle">
+    Deep spending insights are on their way. Track trends, compare months,
+    and understand where every rupee goes — all in one place.
+  </p>
+
+  <div class="preview-cards">
+    <div class="preview-card">
+      <div class="preview-card-icon">↗</div>
+      <h3 class="preview-card-title">Spending Trends</h3>
+      <p class="preview-card-body">Visualise how your spending changes week over week and month over month.</p>
+    </div>
+    <div class="preview-card">
+      <div class="preview-card-icon">◑</div>
+      <h3 class="preview-card-title">Category Breakdown</h3>
+      <p class="preview-card-body">See exactly how much goes to Food, Bills, Health, and more with interactive charts.</p>
+    </div>
+    <div class="preview-card">
+      <div class="preview-card-icon">⊞</div>
+      <h3 class="preview-card-title">Monthly Reports</h3>
+      <p class="preview-card-body">Get a full summary of any month — top spends, averages, and budget comparisons.</p>
+    </div>
+  </div>
+
+  <a href="{{ url_for('profile') }}" class="analytics-back">Back to Profile</a>
+
+</div>
+{% endblock %}
