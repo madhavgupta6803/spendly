@@ -119,6 +119,9 @@
   .section-card-header {
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .section-card-header h2 {
@@ -387,6 +390,7 @@
       <div class="section-card">
         <div class="section-card-header">
           <h2>Recent Transactions</h2>
+          <a href="{{ url_for('add_expense') }}" class="btn-primary-sm">+ Add Expense</a>
         </div>
         <table class="tx-table">
           <thead>
