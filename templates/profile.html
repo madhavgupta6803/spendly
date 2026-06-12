@@ -409,7 +409,14 @@
               <td class="tx-desc">{{ t.description }}</td>
               <td><span class="badge badge-{{ t.category | lower }}">{{ t.category }}</span></td>
               <td class="tx-amount right">{{ t.amount }}</td>
-              <td class="tx-actions"><a href="{{ url_for('edit_expense', id=t.id) }}" class="btn-primary-sm">Edit</a></td>
+              <td class="tx-actions">
+                <a href="{{ url_for('edit_expense', id=t.id) }}" class="btn-primary-sm">Edit</a>
+                <form method="POST" action="{{ url_for('delete_expense_route', id=t.id) }}"
+                      class="inline-form delete-form">
+                  <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+                  <button type="submit" class="btn-danger-sm">Delete</button>
+                </form>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -437,4 +444,14 @@
     </div><!-- /.profile-lower -->
   </div><!-- /.profile-inner -->
 </div><!-- /.profile-page -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.querySelectorAll('.delete-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      if (!confirm('Delete this expense?')) e.preventDefault();
+    });
+  });
+</script>
 {% endblock %}
