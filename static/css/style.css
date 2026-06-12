@@ -316,6 +316,26 @@ a { color: inherit; text-decoration: none; }
 
 .btn-primary-sm:hover { opacity: 0.85; }
 
+.btn-danger-sm {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0.4rem 0.5rem;
+    cursor: pointer;
+    color: var(--danger);
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.15s;
+}
+
+.btn-danger-sm:hover { opacity: 0.7; }
+
+.inline-form { display: inline; }
+
 /* ------------------------------------------------------------------ */
 /* Features section                                                    */
 /* ------------------------------------------------------------------ */
